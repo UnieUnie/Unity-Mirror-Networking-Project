@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class FanSpin : MonoBehaviour
 {
     [Header("Spin Settings")]
-    [Tooltip("Spin speed: Degrees per second")]
+    [Tooltip("Spin floatSpeed: Degrees per second")]
     [SerializeField] float spinSpeed = 100f;
 
     [Tooltip("List of objects to spin.")]
