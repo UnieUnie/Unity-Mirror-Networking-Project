@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class CustomNetworkManager : NetworkManager
 {
+    /*
     TargetGroupCameraController cameraController;
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
@@ -51,4 +52,5 @@ public class CustomNetworkManager : NetworkManager
 
         base.OnServerDisconnect(conn);
     }
+    */
 }

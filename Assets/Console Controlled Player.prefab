@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 1626512561751601238}
   - component: {fileID: 4127333022513903469}
   - component: {fileID: 3961513518287217031}
-  - component: {fileID: 8944570065987891738}
+  - component: {fileID: 8660981616487724863}
+  - component: {fileID: 668249042588946301}
   m_Layer: 0
   m_Name: Console Controlled Player
   m_TagString: Untagged
@@ -123,11 +124,6 @@ MonoBehaviour:
   movementForce: 15
   maxMovementForce: 5
   isMoving: 0
-  horizontalRotationStrength: 1
-  maxVelocityToRotate: 0.01
-  isRotating: 0
-  canRotate: 0
-  rotationForceMode: 2
   rbMass: 20
   rbDrag: 1
   rbAngularDrag: 0.2
@@ -168,7 +164,40 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!114 &8944570065987891738
+--- !u!114 &8660981616487724863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716805033673330871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 8895059685004306622}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  timelineOffset: 1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  bufferResetMultiplier: 3
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01
+--- !u!114 &668249042588946301
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
