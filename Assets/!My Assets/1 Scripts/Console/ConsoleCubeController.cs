@@ -5,7 +5,7 @@ public class ConsoleCubeController : NetworkBehaviour
 {
     [Header("Console Settings")]
     [Tooltip("Console Identifier, used to ensure the correct cube is being controlled")]
-    [SerializeField] int consoleNumber = 1; // not working as intended, but it is working somehow
+    [SerializeField] int consoleNumber = 1;
 
 
 
@@ -85,7 +85,7 @@ public class ConsoleCubeController : NetworkBehaviour
     {
         if (!isServer) return;
         if (!useConsoleInput) return;
-        if (!name.Contains($"Console Model {consoleNumber}")) return;
+        if (!name.Contains($"Console {consoleNumber} Model")) return;
 
         ApplyMovement();
     }

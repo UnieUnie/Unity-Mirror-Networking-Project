@@ -1,3 +1,15 @@
+// ps for myself...
+
+//  the name of the console's model in the scene is IMPORTANT
+//  ConsoleCubeController.cs uses it to determine which console it is:
+//  if (!name.Contains($"Console {consoleNumber} Model")) return;
+//  this script (PlayerController.cs) also uses it in similar ways:
+//  consoleName is assigned by raycast on object tagged with "Console" (the model / the in game object)
+//  the model needs the tag "Console" and need to be called Console 1 Model or Console 2 Model!!!!!!!
+
+
+
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
@@ -208,6 +220,13 @@ public class PlayerController : NetworkBehaviour
         if (consoleCubeControllers == null || consoleCubeControllers.Length == 0)
         {
             consoleCubeControllers = hit.collider.GetComponentsInChildren<ConsoleCubeController>();
+
+            if (consoleCubeControllers == null)
+            {
+                {
+                    consoleCubeControllers = hit.collider.GetComponents<ConsoleCubeController>();
+                }
+            }
         }
 
         // Assign Console View Camera (should only happen once as player spawns with it unassigned)
@@ -216,14 +235,13 @@ public class PlayerController : NetworkBehaviour
             targetCamera = hit.collider.GetComponentInChildren<Camera>();
             targetCameraData = targetCamera.GetComponent<UniversalAdditionalCameraData>();
             Debug.Log("Cam Found" + targetCamera);
-            Debug.Log("Cam Data Got" + targetCameraData);
         }
 
         // The actual functionality of this method
         string consoleName = hit.collider.gameObject.name;
         switch (consoleName)
         {
-            case "Console Model 1":
+            case "Console 1 Model":
                 CmdSetConsoleState(true, false);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
@@ -231,7 +249,7 @@ public class PlayerController : NetworkBehaviour
                 Debug.Log("Console 1 activated");
                 break;
 
-            case "Console Model 2":
+            case "Console 2 Model":
                 CmdSetConsoleState(false, true);
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;

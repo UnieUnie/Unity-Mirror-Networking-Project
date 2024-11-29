@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.EventSystems;
 
 public class ConsoleUIController : NetworkBehaviour
 {
@@ -23,6 +24,11 @@ public class ConsoleUIController : NetworkBehaviour
         OnMouseAction = HandleMouseAction;
         uiLayerMask = 1 << LayerMask.NameToLayer("UI");
         ignoredLayerMask = ~LayerMask.GetMask("Default");
+    }
+
+    void Update()
+    {
+        
     }
 
     void HandleMouseAction(int buttonIndex)
