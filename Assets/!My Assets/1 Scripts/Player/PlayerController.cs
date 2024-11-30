@@ -1,14 +1,9 @@
-// ps for myself...
-
 //  the name of the console's model in the scene is IMPORTANT
 //  ConsoleCubeController.cs uses it to determine which console it is:
 //  if (!name.Contains($"Console {consoleNumber} Model")) return;
 //  this script (PlayerController.cs) also uses it in similar ways:
 //  consoleName is assigned by raycast on object tagged with "Console" (the model / the in game object)
 //  the model needs the tag "Console" and need to be called Console 1 Model or Console 2 Model!!!!!!!
-
-
-
 
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -52,6 +47,8 @@ public class PlayerController : NetworkBehaviour
     ConsoleUIController consoleUIController;
     [SerializeField] LayerMask uiLayerMask;
     #endregion
+
+    #region Unity & Mirror Methods
 
     public override void OnStartClient()
     {
@@ -111,11 +108,13 @@ public class PlayerController : NetworkBehaviour
         if (isConsole1 || isConsole2)
         {
             HandleConsoleMovement();
-            DelegateConsoleInput();
+            //DelegateConsoleInput();
         }
     }
+    #endregion
 
     #region Player Movement & Cube Movement
+    //----------------------------------------------------------------------------------------------------
     void HandleMovement()
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
@@ -150,14 +149,15 @@ public class PlayerController : NetworkBehaviour
         {
             if (controller != null)
             {
-                controller.HandleConsoleInput(consoleHorizontal, consoleVertical);
+                controller.PlayerInputMethod(consoleHorizontal, consoleVertical);
             }
         }
     }
     #endregion
 
-    // 
+
     #region Player Interaction/Raycasts (Player View)
+    //----------------------------------------------------------------------------------------------------
     void PlayerViewInputControl()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -177,21 +177,9 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
 
-    void DelegateConsoleInput()
-    {
-        // Delegate for cross script methods. i dont need to expand it later on, so this should be fine
-        if (Input.GetMouseButtonDown(0))
-            consoleUIController.OnMouseAction.Invoke(0);
 
-        if (Input.GetMouseButtonDown(1))
-            consoleUIController.OnMouseAction.Invoke(1);
-
-        if (Input.GetMouseButtonDown(2))
-            consoleUIController.OnMouseAction.Invoke(2);
-    }
-
-    // Dedicated Methods For Switching Between Console And Player View/Control
     #region Console and Player Control/View Switch
+    //----------------------------------------------------------------------------------------------------
     /// <summary>
     /// This allows player to toggle between Console Control and Player Control.
     /// </summary>

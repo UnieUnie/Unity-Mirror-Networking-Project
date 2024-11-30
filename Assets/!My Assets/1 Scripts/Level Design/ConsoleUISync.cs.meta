@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6bd5fc6b1c3d7844d81f0495eee088d4
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - textToMonitor: {instanceID: 0}
+  - materialToUpdate: {instanceID: 0}
+  - spriteToUpdate: {instanceID: 0}
+  - fallbackMaterial: {fileID: 2100000, guid: c6578605360db8f4a9cfc30b645fa8f4, type: 2}
+  - fallBackSprite: {fileID: 21300000, guid: b059dc2593467bf4cb7d8eaa5634e227, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 39a9b744a598a3444bbea8e443929e5e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - andGateSprite: {fileID: 21300000, guid: 3e1d7d0a4f7123742a4fcf9da51d2446, type: 3}
+  - nandGateSprite: {fileID: 21300000, guid: c0c445b61a3d6f6429d051f2b48fc87f, type: 3}
+  - orGateSprite: {fileID: 21300000, guid: 83b92ab3e559aba489ab48fc66e9b8c9, type: 3}
+  - norGateSprite: {fileID: 21300000, guid: 593135919827a4b49bc4a25f4f943eb8, type: 3}
+  - xorGateSprite: {fileID: 21300000, guid: b5228c224a5f3094ea08c0a891919714, type: 3}
+  - xnorGateSprite: {fileID: 21300000, guid: fa95abc02373d5442b87862a44e20138, type: 3}
+  - notGateSprite: {fileID: 21300000, guid: 6b249160ef2fddf499e636c10dfc34b7, type: 3}
+  - lookAtObject: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

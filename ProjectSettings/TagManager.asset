@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Console Player
   - Console
+  - Puzzle
   layers:
   - Default
   - TransparentFX

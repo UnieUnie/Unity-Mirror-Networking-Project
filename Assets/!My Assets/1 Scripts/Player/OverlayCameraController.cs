@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Syncs FOV of the overlay camera with the console display's camera.
+/// </summary>
 public class OverlayCameraController : MonoBehaviour
 {
     [Header("Camera References")]
@@ -18,11 +22,6 @@ public class OverlayCameraController : MonoBehaviour
 
     void SyncCameraProperties()
     {
-        // Sets both position and rotation to the source camera
-        //targetCamera.transform.SetPositionAndRotation(sourceCamera.transform.position, sourceCamera.transform.rotation);
-
-        //targetCamera.transform.localScale = sourceCamera.transform.localScale;
         targetCamera.fieldOfView = sourceCamera.fieldOfView;
     }
-
 }

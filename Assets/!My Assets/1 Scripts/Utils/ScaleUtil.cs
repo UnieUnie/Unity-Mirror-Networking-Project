@@ -14,12 +14,12 @@ public class ScaleUtil : MonoBehaviour
     [SerializeField] bool autoStart = true;
 
     Vector3 minScale;   // Set at Start(), the object's original scale
-    Vector3 maxScale;   // Set at Start(), the object's original scale + scaleModifier
+    Vector3 maxScale;   // Set at Start(), the object's original scale + scaleValue
     Vector3 targetScale;// Set at Runtime, is the target lerping value, which inverts when finished
     bool scalingUp = true;
 
     /// <summary>
-    /// Initialises min scale and target scale values, and calculates max scale based on scaleModifier
+    /// Initialises min scale and target scale values, and calculates max scale based on scaleValue
     /// </summary>
     void Start()
     {

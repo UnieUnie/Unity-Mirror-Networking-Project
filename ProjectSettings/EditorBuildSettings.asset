@@ -11,7 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/!My Assets/0 Scenes/00 Main Menu.unity
     guid: a3fe7fdb06184c04b9da5fcd0c1f5afd
-  - enabled: 1
+  - enabled: 0
     path: Assets/!My Assets/4 Scenes/01 Single Player Lobby.unity
     guid: c71ed3da341e136499f9ae305e9cfcbd
   - enabled: 1

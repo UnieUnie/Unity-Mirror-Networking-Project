@@ -1,147 +1,141 @@
-using Mirror;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 public class ConsoleCubeController : NetworkBehaviour
 {
+    #region Variables and References
+    //----------------------------------------------------------------------------------------------------
+    // Console Settings
     [Header("Console Settings")]
-    [Tooltip("Console Identifier, used to ensure the correct cube is being controlled")]
+    [Tooltip("Used to identify console and its controlled cube")]
     [SerializeField] int consoleNumber = 1;
 
-
-
+    //----------------------------------------------------------------------------------------------------
+    // Movement Settings
     [Header("Movement Settings")]
-    [Tooltip("Speed of Cube Rotation")]
-    [SerializeField] float movementForce = 15f;
+    [Tooltip("Console cube's rotation speed (Acceleration)")]
+    [SerializeField] float rotationSpeed= 20f;
 
-    [Tooltip("Max Speed of Cube Rotation")]
-    [SerializeField] float maxMovementForce = 5f;
+    [Tooltip("Console cube's max rotation speed")]
+    [SerializeField] float maxRotationSpeed = 5f;
 
-
-
+    // Rigidbody Settings
     [Header("Rigidbody Settings")]
-    [Tooltip("Default Rigidbody Mass (20f)")]
-    [SerializeField] float rbMass = 20f;
-
-    [Tooltip("Default Rigidbody Drag (1f)")]
-    [SerializeField] float rbDrag = 1f;
-
-    [Tooltip("Default Rigidbody Angular Drag (0.2f)")]
-    [SerializeField] float rbAngularDrag = 0.2f;
-
-    [Tooltip("Default Rigidbody Interpolation Method (Interpolate)")]
-    [SerializeField] RigidbodyInterpolation interpolation = RigidbodyInterpolation.Interpolate;
-
-    [Tooltip("Default Rigidbody Collision Detection Method (Continuous)")]
-    [SerializeField] CollisionDetectionMode collisionDetection = CollisionDetectionMode.Continuous;
-    [SerializeField] bool useGravity = true;
-
-    [Header("References")]
-    [Tooltip("i'll hide this from inspector after debug")]
+    [Tooltip("Rigidbody reference for the controlling console cube")]
     [SerializeField] Rigidbody cubeRb;
 
+    [Tooltip("Rigidbody mass (Default 20).")]
+    [SerializeField] float rbMass = 20f;
 
+    [Tooltip("Rigidbody drag (Default 1).")]
+    [SerializeField] float rbDrag = 1f;
 
+    [Tooltip("Rigidbody angular drag (Default 0.2).")]
+    [SerializeField] float rbAngularDrag = 0.2f;
+
+    [Tooltip("Rigidbody interpolation method (Default Interpolate).")]
+    [SerializeField] RigidbodyInterpolation interpolation = RigidbodyInterpolation.Interpolate;
+
+    [Tooltip("Rigidbody collision detection method (Default Continuous).")]
+    [SerializeField] CollisionDetectionMode collisionDetection = CollisionDetectionMode.Continuous;
+
+    [Tooltip("Ridigbody Gravity Flag")]
+    [SerializeField] bool useGravity = true;
+
+    //----------------------------------------------------------------------------------------------------
+    // Cube Control Input and Position Sync Variables
     bool useConsoleInput = false;
-    float consoleHorizontal;
-    float consoleVertical;
+    float horizontalInputs;
+    float verticalInputs;
 
     [SyncVar]
-    private Vector3 syncPosition;
+    Vector3 syncPosition;
+
     [SyncVar]
-    private Quaternion syncRotation;
+    Quaternion syncRotation;
 
-    private float lerpRate = 15f;
+    // these are used to sync the position of the cubes.
+    // i dont remeber exactly why network transform or other stuff isnt used
+    // but it works sooo...
+    //----------------------------------------------------------------------------------------------------
+    #endregion
 
+    #region Mirror Methods
+    // Sync position at server start
     public override void OnStartServer()
     {
         base.OnStartServer();
-        if (cubeRb != null)
-        {
-            syncPosition = cubeRb.position;
-            syncRotation = cubeRb.rotation;
-        }
+        syncPosition = cubeRb.position;
+        syncRotation = cubeRb.rotation;
     }
+    #endregion
 
+    #region Unity Methods
+    // Sets up rigidbody values
     void Start()
     {
         if (cubeRb != null)
         {
-            InitializeRigidbody();
+            cubeRb.useGravity = useGravity;
+            cubeRb.mass = rbMass;
+            cubeRb.drag = rbDrag;
+            cubeRb.angularDrag = rbAngularDrag;
+            cubeRb.maxAngularVelocity = maxRotationSpeed;
+            cubeRb.interpolation = interpolation;
+            cubeRb.collisionDetectionMode = collisionDetection;
         }
-    }
-
-    void InitializeRigidbody()
-    {
-        cubeRb.useGravity = useGravity;
-        cubeRb.mass = rbMass;
-        cubeRb.drag = rbDrag;
-        cubeRb.angularDrag = rbAngularDrag;
-        cubeRb.maxAngularVelocity = maxMovementForce;
-        cubeRb.interpolation = interpolation;
-        cubeRb.collisionDetectionMode = collisionDetection;
-    }
-
-    void Update()
-    {
-        if (!isServer) return;
-        if (!useConsoleInput) return;
-        if (!name.Contains($"Console {consoleNumber} Model")) return;
-
-        ApplyMovement();
     }
 
     void FixedUpdate()
     {
-        if (isServer)
-        {
-            UpdateSyncVars();
-        }
-        else
-        {
-            InterpolatePosition();
-        }
+        if (!isServer) return;
+        syncPosition = cubeRb.position;
+        syncRotation = cubeRb.rotation;
+
+        if (!useConsoleInput) return;
+
+        // Only control our own cube :)
+        if (!name.Contains($"Console {consoleNumber} Model")) return;
+
+        ServerSideMovement();
     }
+    #endregion
 
-    void UpdateSyncVars()
+    #region Movements (Server)
+    //----------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Move the cube when it receives inputs.
+    /// </summary>
+    void ServerSideMovement()
     {
-        if (cubeRb != null)
-        {
-            syncPosition = cubeRb.position;
-            syncRotation = cubeRb.rotation;
-        }
-    }
-
-    void ApplyMovement()
-    {
-        if (cubeRb == null) return;
-
-        Vector3 torqueDirection = new Vector3(consoleVertical, 0, -consoleHorizontal);
-        if (torqueDirection != Vector3.zero)
-        {
-            cubeRb.AddTorque(torqueDirection * movementForce, ForceMode.Acceleration);
-        }
-    }
-
-    public void HandleConsoleInput(float horizontal, float vertical)
-    {
-        if (!name.Contains($"Console Model {consoleNumber}")) return;
-
-        CmdSetMovementInput(horizontal, vertical);
+        Vector3 torqueDirection = new Vector3(verticalInputs, 0, -horizontalInputs);
+        if (torqueDirection == Vector3.zero) return;
+        cubeRb.AddTorque(torqueDirection * rotationSpeed, ForceMode.Acceleration);
     }
 
     [Command(requiresAuthority = false)]
     void CmdSetMovementInput(float horizontal, float vertical)
     {
         useConsoleInput = true;
-        consoleHorizontal = horizontal;
-        consoleVertical = vertical;
+        horizontalInputs = horizontal;
+        verticalInputs = vertical;
     }
+    #endregion
 
-    void InterpolatePosition()
+    #region Local Movements
+    //----------------------------------------------------------------------------------------------------
+    /// <summary>
+    /// Receive inputs from PlayerController.cs.
+    /// </summary>
+    /// <param name="horizontal">Input.GetAxisRaw("Horizontal")</param>
+    /// <param name="vertical">Input.GetAxisRaw("Vertical")</param>
+    public void PlayerInputMethod(float horizontal, float vertical)
     {
-        if (cubeRb == null) return;
+        if (!name.Contains($"Console {consoleNumber} Model")) return;
 
-        cubeRb.position = Vector3.Lerp(cubeRb.position, syncPosition, Time.fixedDeltaTime * lerpRate);
-        cubeRb.rotation = Quaternion.Lerp(cubeRb.rotation, syncRotation, Time.fixedDeltaTime * lerpRate);
-    }
+        CmdSetMovementInput(horizontal, vertical);
+    }   
+    #endregion
 }

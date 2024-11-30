@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 3344429196188522344}
   m_Layer: 0
   m_Name: Player Body
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -245,10 +245,14 @@ MonoBehaviour:
   maxVerticalAngle: 80
   playerCamera: {fileID: 1144691402791957469}
   characterController: {fileID: -3195185135531947324}
+  baseCamera: {fileID: 0}
+  targetCamera: {fileID: 0}
   consoleCubeControllers: []
-  raycastRange: 5
   isConsole1: 0
   isConsole2: 0
+  uiLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!143 &-3195185135531947324
 CharacterController:
   m_ObjectHideFlags: 0
