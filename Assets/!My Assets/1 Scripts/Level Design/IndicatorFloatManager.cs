@@ -24,251 +24,145 @@ public class IndicatorFloatManager : MonoBehaviour
     [Tooltip("Sprite Spawn Height Offset")]
     [SerializeField] float verticalOffset = 1.5f;
 
-    [SerializeField] Transform lookAtObject;
+    [System.Serializable]
+    public class LevelGroup
+    {
+        public GameObject levelObject;
+        public List<LogicGate> gatesInLevel = new List<LogicGate>();
+    }
 
-    [Tooltip("Sprite FaceAt Camera Angle Offset")]
-    [SerializeField] Vector3 lookAtOffset = new(0f, 0f, 0f);
-
-    [Header("Float Settings")]
-    [Tooltip("How far the object will move up and down")]
-    [SerializeField] float floatAmplitude = 0.1f;
-
-    [Tooltip("Floating Speed")]
-    [SerializeField] float floatSpeed = 1.5f;
-
-    [Header("Logic Gates")]
-    [SerializeField] List<LogicGate> logicGates = new List<LogicGate>();
-
-    // Kvp for gate and indicator
+    [Header("Level Groups")]
+    [SerializeField] LevelGroup[] levelGroups = new LevelGroup[5];
     Dictionary<LogicGate, GameObject> gateIndicators = new Dictionary<LogicGate, GameObject>();
 
-    Dictionary<GameObject, float> timeOffsets = new Dictionary<GameObject, float>();
+    [Header("Update Control")] // Stops D3D11 swapchain error (maybe)
+    [Tooltip("Minimum time (in seconds) between material updates")]
+    [SerializeField]
+    float materialChangeCooldown = 0.1f;
+    float lastMaterialUpdate; // Tracks time since last material update
+    Dictionary<LogicGate, LogicGate.GateType> lastKnownTypes = new Dictionary<LogicGate, LogicGate.GateType>();
 
-    private void FixedUpdate()
+
+
+    void Awake()
     {
-        if (lookAtObject == null) return;
-
-        foreach (var kvp in gateIndicators)
-        {
-            LogicGate gate = kvp.Key;
-            GameObject indicator = kvp.Value;
-
-            if (gate == null || indicator == null) continue;
-
-            // Update position
-            Vector3 basePosition = gate.transform.position + (Vector3.up * verticalOffset);
-            float yOffset = floatAmplitude * Mathf.Sin((Time.time + timeOffsets[indicator]) * floatSpeed);
-            indicator.transform.position = basePosition + (Vector3.up * yOffset);
-
-            // Update rotation
-            Vector3 directionToTarget = lookAtObject.position - indicator.transform.position;
-            if (directionToTarget != Vector3.zero)
-            {
-                indicator.transform.rotation = Quaternion.LookRotation(directionToTarget)
-                    * Quaternion.Euler(lookAtOffset);
-            }
-
-            if (indicator.transform.localScale != spriteScale)
-            {
-                indicator.transform.localScale = spriteScale;
-            }
-        }
-    }
-
-    private void OnEnable()
-    {
-        foreach (var gate in logicGates)
-        {
-            if (gate != null)
-            {
-                gate.GateTypeChanged += OnGateTypeChanged;
-            }
-        }
-    }
-
-    private void OnDisable()
-    {
-        foreach (var gate in logicGates)
-        {
-            if (gate != null)
-            {
-                gate.GateTypeChanged -= OnGateTypeChanged;
-            }
-        }
-    }
-
-    private void Awake()
-    {
-        if (lookAtObject == null)
-        {
-            // Find the Console Camera by name and tag
-            Camera[] cameras = Camera.allCameras;
-            foreach (Camera cam in cameras)
-            {
-                if (cam.gameObject.name == "Console Camera" && cam.CompareTag("MainCamera"))
-                {
-                    lookAtObject = cam.transform;
-                    break;
-                }
-            }
-        }
-
         SpawnAllIndicators();
+        UpdateAllLevelStates();
+
+        lastMaterialUpdate = Time.time;
     }
 
-    void OnGateTypeChanged(LogicGate gate, LogicGate.GateType oldType, LogicGate.GateType newType)
+    void Update()
     {
-        UpdateGateIndicator(gate);
+        UpdateAllLevelStates();
     }
 
     void SpawnAllIndicators()
     {
-        foreach (var gate in logicGates)
+        foreach (var group in levelGroups)
         {
-            if (gate != null)
+            foreach (var gate in group.gatesInLevel)
             {
-                SpawnIndicator(gate);
+                if (gate != null) SpawnIndicator(gate);
+                lastKnownTypes[gate] = gate.GetGateType();
             }
         }
     }
 
-     void SpawnIndicator(LogicGate gate)
+    void SpawnIndicator(LogicGate gate)
     {
         if (gate == null) return;
 
-        Sprite selectedSprite = GetSpriteForGate(gate);
-
         GameObject indicator = new GameObject($"Indicator_{gate.GetGateType()}Gate");
-        indicator.transform.SetParent(null);
-
         var spriteRenderer = indicator.AddComponent<SpriteRenderer>();
-        spriteRenderer.sprite = selectedSprite;
+        spriteRenderer.sprite = GetSpriteForGate(gate);
 
         indicator.transform.position = gate.transform.position + (Vector3.up * verticalOffset);
         indicator.transform.localScale = spriteScale;
 
         gateIndicators[gate] = indicator;
-        timeOffsets[indicator] = Random.Range(0f, Mathf.PI * 2);
+        indicator.SetActive(false); // Start as disabled
     }
 
-    void UpdateGateIndicator(LogicGate gate)
+    void UpdateAllLevelStates()
+    {
+        foreach (var group in levelGroups)
+        {
+            if (group.levelObject == null) continue;
+            UpdateLevelState(group);
+
+            if (Time.time - lastMaterialUpdate >= materialChangeCooldown)
+            {
+                CheckGateTypeChanges();
+                lastMaterialUpdate = Time.time;
+            }
+        }
+    }
+
+    void UpdateLevelState(LevelGroup group)
+    {
+        bool isLevelEnabled = group.levelObject.activeSelf;
+        foreach (var gate in group.gatesInLevel)
+        {
+            if (gate != null && gateIndicators.TryGetValue(gate, out GameObject indicator))
+            {
+                indicator.SetActive(isLevelEnabled);
+            }
+        }
+    }
+
+    Sprite GetSpriteForGate(LogicGate gate) => gate.GetGateType() switch
+    {
+        LogicGate.GateType.AND => andGateSprite,
+        LogicGate.GateType.OR => orGateSprite,
+        LogicGate.GateType.NOT => notGateSprite,
+        LogicGate.GateType.NAND => nandGateSprite,
+        LogicGate.GateType.NOR => norGateSprite,
+        LogicGate.GateType.XOR => xorGateSprite,
+        LogicGate.GateType.XNOR => xnorGateSprite,
+        _ => null
+    };
+
+    void CheckGateTypeChanges()
+    {
+        foreach (var gate in gateIndicators.Keys)
+        {
+            if (gate == null) continue;
+
+            LogicGate.GateType currentType = gate.GetGateType();
+            if (lastKnownTypes.TryGetValue(gate, out LogicGate.GateType lastType) && currentType != lastType)
+            {
+                UpdateGateSprite(gate, currentType);
+                lastKnownTypes[gate] = currentType;
+            }
+        }
+    }
+
+    void UpdateGateSprite(LogicGate gate, LogicGate.GateType newType)
     {
         if (gateIndicators.TryGetValue(gate, out GameObject indicator))
         {
             var spriteRenderer = indicator.GetComponent<SpriteRenderer>();
-            if (spriteRenderer != null)
-            {
-                spriteRenderer.sprite = GetSpriteForGate(gate);
-                indicator.name = $"Indicator_{gate.GetGateType()}Gate";
-            }
+            spriteRenderer.sprite = GetSpriteForGate(gate);
+            indicator.name = $"Indicator_{newType}Gate";
         }
     }
 
-    Sprite GetSpriteForGate(LogicGate gate)
+    private void OnValidate()
     {
-        return gate.GetGateType() switch
+        if (levelGroups.Length != 5)
         {
-            LogicGate.GateType.AND => andGateSprite,
-            LogicGate.GateType.OR => orGateSprite,
-            LogicGate.GateType.NOT => notGateSprite,
-            LogicGate.GateType.NAND => nandGateSprite,
-            LogicGate.GateType.NOR => norGateSprite,
-            LogicGate.GateType.XOR => xorGateSprite,
-            LogicGate.GateType.XNOR => xnorGateSprite,
-            _ => null
-        };
+            System.Array.Resize(ref levelGroups, 5);
+        }
     }
 
-    /// <summary>
-    /// These methods are designed to be used with TMP button's onClick()
-    /// 
-    /// </summary>
-    #region Public Method To Control Indicators
-    public void EnableAllIndicators()
+    private void OnDestroy()
     {
         foreach (var indicator in gateIndicators.Values)
         {
-            indicator?.SetActive(true);
-        }
-    }
-    public void DisableAllIndicators()
-    {
-        foreach (var indicator in gateIndicators.Values)
-        {
-            if (indicator != null)
-            {
-                indicator.SetActive(false);
-            }
-        }
-    }
-
-
-    public void DeleteIndicator(LogicGate gate)
-    {
-        if (gateIndicators.TryGetValue(gate, out var indicator))
-        {
-            if (indicator != null)
-            {
-                Destroy(indicator);
-            }
-        }
-
-        gateIndicators.Remove(gate);
-        timeOffsets.Remove(indicator);
-    }
-
-    public void DeleteAllIndicators()
-    {
-        foreach (var indicator in gateIndicators.Values)
-        {
-            if (indicator != null)
-            {
-                Destroy(indicator);
-            }
+            if (indicator) Destroy(indicator);
         }
         gateIndicators.Clear();
-        timeOffsets.Clear();
-    }
-
-    public void RespawnAllIndicators()
-    {
-        DeleteAllIndicators();
-        SpawnAllIndicators();
-    }
-
-    public void DisableIndicator(LogicGate gate)
-    {
-        if (gateIndicators.TryGetValue(gate, out var indicator))
-        {
-            indicator?.SetActive(false);
-        }
-    }
-
-    public void EnableIndicator(LogicGate gate)
-    {
-        if (gateIndicators.TryGetValue(gate, out var indicator))
-        {
-            indicator?.SetActive(false);
-        }
-    }
-
-    public void RespawnIndicator(LogicGate gate)
-    {
-        DeleteIndicator(gate);
-        SpawnIndicator(gate);
-    }
-    #endregion
-
-    void OnDestroy()
-    {
-        DeleteAllIndicators();
-    }
-
-    void OnValidate()
-    {
-        // crazy looking code
-        // removes all gate that returns null
-        // i.e remove every null references of gate
-        logicGates.RemoveAll(gate => gate == null);
+        lastKnownTypes.Clear();
     }
 }

@@ -1306,11 +1306,18 @@ MonoBehaviour:
   notGateSprite: {fileID: 21300000, guid: 6b249160ef2fddf499e636c10dfc34b7, type: 3}
   spriteScale: {x: 0.7, y: 0.7, z: 0.7}
   verticalOffset: 1.5
-  lookAtObject: {fileID: 0}
-  lookAtOffset: {x: 0, y: 0, z: 0}
-  floatAmplitude: 0.1
-  floatSpeed: 1.5
-  logicGates: []
+  levelGroups:
+  - levelObject: {fileID: 0}
+    gatesInLevel: []
+  - levelObject: {fileID: 0}
+    gatesInLevel: []
+  - levelObject: {fileID: 0}
+    gatesInLevel: []
+  - levelObject: {fileID: 0}
+    gatesInLevel: []
+  - levelObject: {fileID: 0}
+    gatesInLevel: []
+  materialChangeCooldown: 0.1
 --- !u!64 &85472804
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1937,7 +1944,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &111922706
 Transform:
   m_ObjectHideFlags: 0
@@ -12601,7 +12608,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &534647708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22481,23 +22488,31 @@ MonoBehaviour:
   notGateSprite: {fileID: 21300000, guid: 6b249160ef2fddf499e636c10dfc34b7, type: 3}
   spriteScale: {x: 0.5, y: 0.5, z: 0.5}
   verticalOffset: 1.5
-  lookAtObject: {fileID: 0}
-  lookAtOffset: {x: 0, y: 0, z: 0}
-  floatAmplitude: 0.1
-  floatSpeed: 1
-  logicGates:
-  - {fileID: 1087868421}
-  - {fileID: 85472801}
-  - {fileID: 1868204386}
-  - {fileID: 1174107669}
-  - {fileID: 1269413096}
-  - {fileID: 328677571}
-  - {fileID: 1649834902}
-  - {fileID: 421614429}
-  - {fileID: 562558897}
-  - {fileID: 777325429}
-  - {fileID: 461606972}
-  - {fileID: 597583532}
+  levelGroups:
+  - levelObject: {fileID: 111922704}
+    gatesInLevel:
+    - {fileID: 1087868421}
+  - levelObject: {fileID: 1582469179}
+    gatesInLevel:
+    - {fileID: 85472801}
+  - levelObject: {fileID: 1085813655}
+    gatesInLevel:
+    - {fileID: 1868204386}
+  - levelObject: {fileID: 1091257063}
+    gatesInLevel:
+    - {fileID: 1174107669}
+    - {fileID: 1269413096}
+  - levelObject: {fileID: 642510918}
+    gatesInLevel:
+    - {fileID: 328677571}
+    - {fileID: 1649834902}
+    - {fileID: 421614429}
+    - {fileID: 562558897}
+    - {fileID: 777325429}
+    - {fileID: 461606972}
+    - {fileID: 597583532}
+    - {fileID: 649495101}
+  materialChangeCooldown: 0.1
 --- !u!4 &780753433
 Transform:
   m_ObjectHideFlags: 0
@@ -30026,7 +30041,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1085813656
 Transform:
   m_ObjectHideFlags: 0
@@ -30222,7 +30237,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1091257064
 Transform:
   m_ObjectHideFlags: 0
@@ -45093,7 +45108,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1582469180
 Transform:
   m_ObjectHideFlags: 0
@@ -51581,11 +51596,18 @@ MonoBehaviour:
   notGateSprite: {fileID: 21300000, guid: 6b249160ef2fddf499e636c10dfc34b7, type: 3}
   spriteScale: {x: 0.7, y: 0.7, z: 0.7}
   verticalOffset: 1.5
-  lookAtObject: {fileID: 0}
-  lookAtOffset: {x: 0, y: 0, z: 0}
-  floatAmplitude: 0.1
-  floatSpeed: 1.5
-  logicGates: []
+  levelGroups:
+  - levelObject: {fileID: 0}
+    gatesInLevel: []
+  - levelObject: {fileID: 0}
+    gatesInLevel: []
+  - levelObject: {fileID: 0}
+    gatesInLevel: []
+  - levelObject: {fileID: 0}
+    gatesInLevel: []
+  - levelObject: {fileID: 0}
+    gatesInLevel: []
+  materialChangeCooldown: 0.1
 --- !u!64 &1868204389
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -62154,10 +62176,10 @@ SceneRoots:
   - {fileID: 8895059685257499986}
   - {fileID: 1671119625}
   - {fileID: 265912639}
+  - {fileID: 780753433}
   - {fileID: 557212274}
   - {fileID: 257899534}
   - {fileID: 971129056}
-  - {fileID: 780753433}
   - {fileID: 176160642}
   - {fileID: 1119925644}
   - {fileID: 543450652890346208}

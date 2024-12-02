@@ -40,6 +40,7 @@ public class PuzzleResult : PuzzleComponent
         UpdateMaterials();
     }
 
+    /*
     void Update()
     {
         if (completeState && !hasTriggeredCompletion)
@@ -67,7 +68,7 @@ public class PuzzleResult : PuzzleComponent
             return;
         }
     }
-
+    */
 
     bool ValidateInput() => inputComponent != null;
 
