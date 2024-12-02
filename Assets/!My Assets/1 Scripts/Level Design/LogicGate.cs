@@ -241,9 +241,9 @@ public class LogicGate : PuzzleComponent
     {
         base.OnValidate();
         ValidateInputs();
-        /*if (Application.isEditor && !Application.isPlaying)
+        if (Application.isEditor && !Application.isPlaying)
         {
             UpdateMaterials();
-        }*/
+        }
     }
 }
